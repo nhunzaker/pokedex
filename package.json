@@ -4,8 +4,6 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "database": "^0.0.2",
-    "mitt": "^1.1.3",
     "parcel-bundler": "^1.12.3",
     "preact": "^8.5.2",
     "zen-observable": "^0.8.14"
@@ -15,6 +13,10 @@
   ],
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html",
+    "deploy": "yarn build && surge dist --domain https://parsimonious-authority.surge.sh"
+  },
+  "devDependencies": {
+    "parcel-plugin-sw-precache": "^1.1.1"
   }
 }

@@ -1,10 +1,60 @@
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#app {
+  display: inline;
+}
+
+.Layout {
+  display: flex;
+  height: 100%;
+}
+
+.LayoutBody {
+  flex: 1 1;
+  overflow: auto;
+}
+
+.LayoutSidebar {
+  background: #333;
+  color: white;
+  padding: 24px;
+  flex: 0 0;
+  min-width: 300px;
+}
+
+.LayoutSidebar table {
+  margin-top: 24px;
+  width: 100%;
+}
+
+.EntryList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0;
+  padding: 24px;
+}
+
 .Entry {
-  border-radius: 4px;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  display: inline-block;
-  padding: 10px;
+  margin: 0;
+  padding: 0;
   list-style: none;
-  margin: 12px;
+  will-change: all;
 }
 
 .Entry img {
@@ -12,7 +62,12 @@
 }
 
 .Entry figure {
-  margin: 0 auto;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  margin: 4px;
+  padding: 12px;
+  position: relative;
+  overflow: hidden;
 }
 
 .Entry figcaption {

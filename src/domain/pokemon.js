@@ -1,11 +1,11 @@
-import { getAll, find, write } from "../data/database";
-import { listen } from "./dispatcher";
+import { getAll, find, write } from "../base/database";
+import { listen } from "../base/dispatcher";
 import { getGenerationOne } from "../data/pokedex";
 
 async function fetchPokemon() {
   let pokemon = await getGenerationOne();
 
-  write("pokemon", pokemon);
+  return write("pokemon", pokemon);
 }
 
 function getAllPokemon() {

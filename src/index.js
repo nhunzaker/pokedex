@@ -1,43 +1,14 @@
-import { h, render, update, Component } from "preact";
-import { Client } from "./ui/client";
-import "./ui/style.css";
+import { h, render } from "preact";
+import { Pokedex } from "./ui/pokedex";
 
-const client = new Client(new Worker("./domain/pokemon.js"));
+render(<Pokedex />, document.getElementById("app"));
 
-class Pokedex extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      pokemon: []
-    };
-  }
-
-  componentDidMount() {
-    client.request("getAllPokemon").subscribe(pokemon => {
-      this.setState({ pokemon });
-    });
-  }
-
-  render(_, { pokemon }) {
-    return (
-      <ul>
-        {pokemon.map(monster => {
-          const src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${monster.id +
-            1}.png`;
-
-          return (
-            <li key={monster.id} class="Entry">
-              <figure>
-                <img src={src} width="96" height="96" />
-                <figcaption>{monster.name}</figcaption>
-              </figure>
-            </li>
-          );
-        })}
-      </ul>
+if ("serviceWorker" in navigator) {
+  if (process.env.NODE_ENV === "production") {
+    navigator.serviceWorker.register(
+      // Gets around issue with parcel compiling the service-worker script
+      // that is generated during the build
+      window.location.origin + "/service-worker.js"
     );
   }
 }
-
-render(<Pokedex />, document.getElementById("app"));
