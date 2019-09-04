@@ -3,20 +3,32 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "dependencies": {
-    "parcel-bundler": "^1.12.3",
-    "preact": "^8.5.2",
-    "zen-observable": "^0.8.14"
-  },
   "browserslist": [
     "last 1 Chrome versions"
   ],
+  "babel": {
+    "plugins": [
+      "babel-plugin-graphql-tag"
+    ]
+  },
   "scripts": {
     "start": "parcel index.html",
     "build": "parcel build index.html",
-    "deploy": "yarn build && surge dist --domain https://parsimonious-authority.surge.sh"
+    "clean": "rm -rf dist .cache",
+    "deploy": "yarn build && surge dist --domain https://parsimonious-authority.surge.sh",
+    "format": "prettier --write 'src/**/*.{js,svelte}'"
   },
-  "devDependencies": {
-    "parcel-plugin-sw-precache": "^1.1.1"
+  "dependencies": {
+    "prettier": "^1.18.2",
+    "parcel-plugin-svelte": "^4.0.2",
+    "prettier-plugin-svelte": "^0.7.0",
+    "svelte": "^3.9.1",
+    "@babel/core": "^7.5.5",
+    "babel-plugin-graphql-tag": "^2.5.0",
+    "graphql": "^14.5.4",
+    "graphql-tag": "^2.10.1",
+    "parcel-bundler": "^1.12.3",
+    "parcel-plugin-sw-precache": "^1.1.1",
+    "svelte-observable": "^0.4.0"
   }
 }

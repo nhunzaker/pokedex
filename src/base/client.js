@@ -1,5 +1,7 @@
-import Observable from "zen-observable";
+import { Observable } from "./observable";
 import { getDispatchId } from "./parameters";
+import { deserializeError } from "./errors";
+import { send, receive } from "./messaging";
 
 const cache = new Map();
 
@@ -14,32 +16,32 @@ export function createClient(worker) {
     const message = { id, type, payload };
 
     const job = new Observable(observer => {
-      function listener(event) {
-        if (event.data.id !== id) {
+      const listener = receive(data => {
+        if (data.id !== id) {
           return;
         }
 
-        switch (event.data.status) {
+        switch (data.status) {
           case "next":
-            cache.delete(id);
-            observer.next(event.data.payload);
+            observer.next(data.payload);
             break;
           case "complete":
             cache.delete(id);
             observer.complete();
             break;
           case "error":
-            observer.error(event.data.payload);
+            observer.error(deserializeError(data.payload));
             break;
         }
-      }
+      });
 
       worker.addEventListener("message", listener);
-      worker.postMessage(message);
+
+      send(worker, message);
 
       return () => {
         worker.removeEventListener("message", listener);
-        worker.postMessage({ id, type: "__unsubscribe" });
+        send(worker, { id, type: "__unsubscribe" });
       };
     });
 

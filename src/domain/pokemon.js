@@ -1,21 +1,21 @@
-import { getAll, find, write } from "../base/database";
+import { db } from "../data/database";
 import { listen } from "../base/dispatcher";
-import { getGenerationOne } from "../data/pokedex";
+import { fetchGenerationOne, fetchPokemon } from "../data/pokedex";
 
-async function fetchPokemon() {
-  let pokemon = await getGenerationOne();
+export function getAllPokemon() {
+  fetchGenerationOne().then(data => {
+    db.update("Pokemon", data);
+  });
 
-  return write("pokemon", pokemon);
+  return db.getAll("Pokemon");
 }
 
-function getAllPokemon() {
-  fetchPokemon();
+export function getPokemon({ id }) {
+  fetchPokemon(id).then(data => {
+    db.update("Pokemon", [data]);
+  });
 
-  return getAll("pokemon");
-}
-
-function getPokemon({ id }) {
-  return find("pokemon", id);
+  return db.find("Pokemon", id);
 }
 
 listen(self, { getAllPokemon, getPokemon });

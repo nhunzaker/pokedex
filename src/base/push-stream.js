@@ -1,4 +1,4 @@
-import Observable from "zen-observable";
+import { Observable } from "./observable";
 
 function send(p, message, value) {
   if (p._observer) {
@@ -53,27 +53,32 @@ function deleteObserver(p, observer) {
   }
 }
 
-function notifyStart(p, opts) {
-  !hasObserver(p) && opts && opts.start && opts.start();
+function notifyStart(stream, p, opts) {
+  !hasObserver(p) && opts && opts.start && opts.start.call(stream);
 }
 
-function notifyPause(p, opts) {
-  !hasObserver(p) && opts && opts.pause && opts.pause();
+function notifyPause(stream, p, opts) {
+  !hasObserver(p) && opts && opts.pause && opts.pause.call(stream);
 }
 
 export default class PushStream {
   constructor(opts) {
     var p = this;
 
+    this._active = false;
+    this._lastValue = undefined;
+
     this._observer = null;
     this._observers = null;
-    this._observable = new Observable(function(observer) {
-      notifyStart(p, opts);
+    this._observable = new Observable(observer => {
+      notifyStart(this, p, opts);
       addObserver(p, observer);
-      return function() {
-        console.log("CLLEAN UP");
+
+      return () => {
+        this._lastValue = undefined;
+        this._active = false;
         deleteObserver(p, observer);
-        notifyPause(p, opts);
+        notifyPause(this, p, opts);
       };
     });
   }
@@ -87,6 +92,8 @@ export default class PushStream {
   }
 
   next(x) {
+    this._lastValue = x;
+    this._active = true;
     send(this, "next", x);
   }
 
@@ -96,5 +103,28 @@ export default class PushStream {
 
   complete() {
     send(this, "complete");
+  }
+
+  subscribe(callback) {
+    if (this._active) {
+      if (typeof callback === "function") {
+        callback(this._lastValue);
+      } else if (
+        typeof callback === "object" &&
+        typeof callback.next === "function"
+      ) {
+        callback.next(this._lastValue);
+      }
+    }
+
+    return this.observable.subscribe.apply(this.observable, arguments);
+  }
+
+  flatMap() {
+    return this.observable.flatMap.apply(this.observable, arguments);
+  }
+
+  map() {
+    return this.observable.flatMap.apply(this.observable, arguments);
   }
 }

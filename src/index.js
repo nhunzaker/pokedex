@@ -1,7 +1,6 @@
-import { h, render } from "preact";
-import { Pokedex } from "./ui/pokedex";
+import Pokedex from "./ui/pokedex.svelte";
 
-render(<Pokedex />, document.getElementById("app"));
+new Pokedex({ target: document.body });
 
 if ("serviceWorker" in navigator) {
   if (process.env.NODE_ENV === "production") {
@@ -10,5 +9,11 @@ if ("serviceWorker" in navigator) {
       // that is generated during the build
       window.location.origin + "/service-worker.js"
     );
+  } else {
+    navigator.serviceWorker.getRegistrations().then(registrations => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
   }
 }
